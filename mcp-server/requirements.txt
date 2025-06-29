@@ -1,6 +1,0 @@
-fastapi
-fastapi-mcp
-uvicorn
-pandas
-mcp_proxy
-python-dotenv
