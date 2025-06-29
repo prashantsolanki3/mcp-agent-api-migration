@@ -17,3 +17,6 @@ openai
 anthropic
 
 pydantic-settings
+langchain-chroma
+chromadb
+tiktoken
