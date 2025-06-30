@@ -40,11 +40,6 @@ This project exposes an addition tool as an MCP server using FastAPI and fastapi
 }
 ```
 
-## Endpoints
-
-- `/add?a=<int>&b=<int>`: Adds two numbers and returns the sum.
-- `/mcp`: MCP endpoint for tool discovery and interaction.
-
 ## Setup in IDE
 
 ```json
