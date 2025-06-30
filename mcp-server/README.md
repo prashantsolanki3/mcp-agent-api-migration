@@ -27,6 +27,19 @@ This project exposes an addition tool as an MCP server using FastAPI and fastapi
    
    Use the `mcp_config.json` to configure your MCP client (e.g., Claude Desktop Agent or VS Code MCP extension) to connect via mcp-proxy.
 
+```json
+{
+  "mcpServers": {
+    "addition-tool-mcp": {
+      "command": "<PATH_TO_MCP_PROXY>/mcp-agent-api-migration/.venv/bin/mcp-proxy",
+      "args": ["http://127.0.0.1:8000/mcp"],
+      "cwd": "<PATH_TO_MCP_PROXY>/mcp-agent-api-migration",
+      "env": {}
+    }
+  }
+}
+```
+
 ## Endpoints
 
 - `/add?a=<int>&b=<int>`: Adds two numbers and returns the sum.
