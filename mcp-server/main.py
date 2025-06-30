@@ -4,6 +4,7 @@ from fastapi_mcp import FastApiMCP
 from dotenv import load_dotenv
 import os
 from agents.discovery_agent import create_discovery_agent
+from .scan_java import scan_java_files
 from agents.components.utils import get_llm
 from langgraph.graph import StateGraph
 # Import the ingest function
@@ -28,24 +29,38 @@ async def add(a: int, b: int):
     return {"sum": result}
 
 
+
+from fastapi import Query
+
 @app.get(
     "/run_discovery",
     operation_id="run_discovery_agent",
     summary="Run the discovery agent to analyze Spring Boot source and generate OpenAPI spec",
 )
-async def run_discovery():
+async def run_discovery(
+    input_dir: str = Query('mcp-server', description="Directory to scan for Java code"),
+    output_dir: str = Query('knowledge_base', description="Directory to write output files"),
+    vectorstore_k: int = Query(5, description="Number of relevant documents to retrieve from vector store")
+
+):
     """Run the discovery agent to analyze Spring Boot source and generate OpenAPI spec."""
     status_message = "Running discovery agent..."
-    agent: StateGraph = create_discovery_agent(llm)
-    compiled_agent = agent.compile()
-    response = compiled_agent.invoke({})
+    compiled_agent = create_discovery_agent(llm)
+    # Scan Java files on the server side
+    java_code = scan_java_files(input_dir)
+    print(f"Scanned Java code: {java_code[:100]}...")  # Print first 100 chars for debugging
+    # Build state with correct types for DiscoveryState
+    state = {
+        "input_dir": str(input_dir),
+        "output_dir": str(output_dir),
+        "java_code": str(java_code),
+        "vectorstore_k": vectorstore_k
+    }
+    response = compiled_agent.invoke(state)  # type: ignore
     return {
         "status": status_message,
-        "result": str(response)
+        "result": response
     }
-
-
-
 
 # Endpoint to ingest files into the vector store
 @app.post("/ingest_files", summary="Ingest project files into the vector store for knowledge base")
